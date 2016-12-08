@@ -13,7 +13,15 @@ Computes mode shapes from FRF matrix
 """
 
 from numpy import *
-import scipy.linalg
+from scipy import linalg, interpolate
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+def importCSV(filename):
+    # Import from text file (ignore header row)
+    dat = loadtxt(filename,delimiter=',',skiprows=1)
+    return dat
+
 
 def importFRF(filename):
     # Import from text file (ignore header row)
@@ -81,9 +89,37 @@ def getCMIF(FRF,w,pole=None,outDOF=None,inDOF=None):
         print(w[ns_ind.astype(int)])
         shapes = uu[:,:,ns_ind.astype(int)]
 
-        return CMIF, shapes
+        return CMIF, shapes, FRFsub
     else:
-        return CMIF
+        return CMIF, FRFsub
+
+#def plotFRF(FRF):
+
+def modeInterp(coords,z,bounds,scale):
+    # concat geometry
+    xTot = vstack(coords[:,0],bounds[:,0])
+    yTot = vstack(coords[:,1],bounds[:,1])
+    zTot = vstack(z,bounds[:,2])
+
+    # define grid resolution
+    xres = 49
+    yres = 49
+
+    # interpolate
+    xv = linspace(xTot.min, xTot.max, xres)
+    yv = linspace(yTot.min, yTot.max, yres)
+    xInter, yInter = meshgrid(xv, yv)
+    tck = interpolate.bisplrep(xTot,yTot,zTot,s=0)
+    zInter = interpolate.bisplev(xInter,yInter,tck)
+
+    # plot mesh surface
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(xInter, yInter, zInter*scale, rstride=1,
+                cstride=1, cmap=cm.gist_rainbow, linewidth=0, antialiased=False)
+
+    plt.show()
+
 
 
 def main():
