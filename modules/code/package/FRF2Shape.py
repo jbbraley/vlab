@@ -83,12 +83,13 @@ def getCMIF(FRF,w,pole=None,outDOF=None,inDOF=None):
     if pole is not None:
         # use predefined pole locations
         ns_ind = zeros(pole.shape[0])
+        shapes = zeros((no,pole.shape[0]))
         for ii in range(0,pole.shape[0]):
-            ns_ind[ii] = abs(w-pole[ii]).argmin()
-        ##Compute mode shapes at pole locations indices
-        print(w[ns_ind.astype(int)])
-        shapes = uu[:,:,ns_ind.astype(int)]
-
+            # find corresponding spectral line
+            ns_ind[ii] = abs(w-pole[ii]*2*pi).argmin()
+            # pull shapes from left singular vectors
+            shapes[:,ii] = imag(uu[:,ss[ns_ind[ii].astype(int),:].argmax(),ns_ind[ii].astype(int)])
+            
         return CMIF, shapes, FRFsub
     else:
         return CMIF, FRFsub
@@ -97,26 +98,27 @@ def getCMIF(FRF,w,pole=None,outDOF=None,inDOF=None):
 
 def modeInterp(coords,z,bounds,scale):
     # concat geometry
-    xTot = vstack(coords[:,0],bounds[:,0])
-    yTot = vstack(coords[:,1],bounds[:,1])
-    zTot = vstack(z,bounds[:,2])
+    xTot = r_[coords[:,0],bounds[:,0]]
+    yTot = r_[coords[:,1],bounds[:,1]]
+    zTot = r_[z,bounds[:,2]]
 
     # define grid resolution
     xres = 49
     yres = 49
 
     # interpolate
-    xv = linspace(xTot.min, xTot.max, xres)
-    yv = linspace(yTot.min, yTot.max, yres)
+    xv = linspace(xTot.min(), xTot.max(), xres)
+    yv = linspace(yTot.min(), yTot.max(), yres)
     xInter, yInter = meshgrid(xv, yv)
-    tck = interpolate.bisplrep(xTot,yTot,zTot,s=0)
-    zInter = interpolate.bisplev(xInter,yInter,tck)
+    tck = interpolate.bisplrep(xTot,yTot,zTot)
+    zInter = interpolate.bisplev(xInter[0,:],yInter[:,0],tck)
 
     # plot mesh surface
     fig = plt.figure()
     ax = fig.gca(projection='3d')
+    rainbow = cm = plt.get_cmap('gist_rainbow')
     surf = ax.plot_surface(xInter, yInter, zInter*scale, rstride=1,
-                cstride=1, cmap=cm.gist_rainbow, linewidth=0, antialiased=False)
+                cstride=1, cmap=rainbow, linewidth=0, antialiased=False)
 
     plt.show()
 

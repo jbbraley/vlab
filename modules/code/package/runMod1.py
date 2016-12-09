@@ -18,9 +18,9 @@ boundy = boundy.flatten()
 bcoords = hstack((boundx[...,None],boundy[...,None],zeros(boundx.shape[0])[...,None]))
 ## Compile input parameters
 # input dof locations
-ins = arange(5,11)
+ins = arange(6,11)
 # output dof locations
-outs = arange(5,21)
+outs = arange(6,22)
 # other future capabilities
 
 
@@ -30,12 +30,10 @@ poles = array([5.54, 7.84, 11.67, 15.34, 19.47])
 # Run getCMIF
 CMIF, shapes, FRFsub = FRF2Shape.getCMIF(FRF,w,pole=poles,inDOF=ins,outDOF=outs)
 
-print(DOF_coord.shape)
-print(shapes.shape)
-
 ## Plot results
 # Plot FRF
 
 # Plot CMIF
 # Plot curve fit of ShapeArray (with DOF coords)
-#FRF2Shape.modeInterp(DOF_coord,shapes[:,:,0],bcoords,100)
+for eachshape in range(0,poles.shape[0]):
+    FRF2Shape.modeInterp(DOF_coord[outs,:],shapes[:,eachshape],bcoords,75)
