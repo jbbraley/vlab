@@ -22,10 +22,10 @@ bcoords = hstack((boundx[...,None],boundy[...,None],zeros(boundx.shape[0])[...,N
 
 ## Compile input parameters
 # These will come from the user's interaction with the UI
-# input dof locations
-ins = arange(11,17)
-# output dof locations
-outs = arange(6,11)
+# input (impact) dof locations
+ins = arange(11,16)
+# output (sensors) dof locations
+outs = arange(6,21)
 
 
 ## Compute Shapes from FRF subset
