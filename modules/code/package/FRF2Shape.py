@@ -45,51 +45,64 @@ def getCMIF(FRF,w,pole=None,outDOF=None,inDOF=None):
     If no input or output degrees of freedom are specified, the svd is performed on the full FRF
     If poles are specified the shapes at those pole are returned, otherwise all the left singular vectors are returned
     """
-    # Resample FRF to form subset
-    FRFsub = FRF
 
+    # Resample FRF to form subset
     if outDOF is None:
         no = FRF.shape[0]
+        outs = arange(0,no-1)
     else:
-        FRFsub = FRFsub[outDOF-1,:,:]
+        outs = outDOF-1
         no = outDOF.shape[0]
 
     if inDOF is None:
         ni = FRF.shape[1]
+        ins = arange(0,ni-1)
     else:
-        FRFsub = FRFsub[:,inDOF-1,:]
+        ins = inDOF-1
         ni = inDOF.shape[0]
 
-    if FRFsub.shape[1]>FRFsub.shape[0]:
-        FRFsub = transpose(FRFsub,(1,0,2))
-        no = ni
-        ni = FRFsub.shape[1]
+    FRFsub = FRF[outs,:,:][:,ins,:]
+
+    if FRFsub.shape[1]>=FRFsub.shape[0]:
+        inswitchout = 1
+        ni, no = no, ni
+    else:
+        inswitchout=0
 
     # Compute CMIF
-    freq_lines = FRFsub.shape[2]
     # preallocate
     ns = FRFsub.shape[2]
     uu = zeros((no,ni,ns),dtype=complex64)
     vv = zeros((ni,ni,ns),dtype=complex64)
     ss = zeros((ns,ni),dtype=complex64)
-    for ii in range(0,freq_lines-1):
-        u, s, v = linalg.svd(asmatrix(FRFsub[:,:,ii]),full_matrices=False, compute_uv=True)
+    for ii in range(0,ns-1):
+        if inswitchout==1:
+            frf = asmatrix(FRFsub[:,:,ii]).H
+        else:
+            frf = asmatrix(FRFsub[:,:,ii])
+
+        u, s, v = linalg.svd(frf,full_matrices=False, compute_uv=True)
         uu[:,:,ii] = u
-        vv[:,:,ii] = v.T
+        vv[:,:,ii] = v
         ss[ii,:] = s
 
     CMIF = ss
 
     if pole is not None:
+
+        if inswitchout==1:
+            allshapes = transpose(real(vv),(1,0,2))
+        else:
+            allshapes = imag(uu)
         # use predefined pole locations
         ns_ind = zeros(pole.shape[0])
-        shapes = zeros((no,pole.shape[0]))
+        shapes = zeros((allshapes.shape[0],pole.shape[0]))
         for ii in range(0,pole.shape[0]):
             # find corresponding spectral line
             ns_ind[ii] = abs(w-pole[ii]*2*pi).argmin()
-            # pull shapes from left singular vectors
-            shapes[:,ii] = imag(uu[:,ss[ns_ind[ii].astype(int),:].argmax(),ns_ind[ii].astype(int)])
-            
+            # pull shapes from singular vector
+            shapes[:,ii] = allshapes[:,ss[ns_ind[ii].astype(int),:].argmax(),ns_ind[ii].astype(int)]
+
         return CMIF, shapes, FRFsub
     else:
         return CMIF, FRFsub
