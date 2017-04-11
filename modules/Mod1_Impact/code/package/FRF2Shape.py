@@ -109,7 +109,7 @@ def getCMIF(FRF,w,pole=None,outDOF=None,inDOF=None):
 
 #def plotFRF(FRF):
 
-def modeInterp(coords,z,bounds,scale):
+def modeInterp(coords,z,bounds,scale, saveloc, savename):
     # concat geometry
     xTot = r_[coords[:,0],bounds[:,0]]
     yTot = r_[coords[:,1],bounds[:,1]]
@@ -133,7 +133,8 @@ def modeInterp(coords,z,bounds,scale):
     surf = ax.plot_surface(xInter, yInter, zInter*scale, rstride=1,
                 cstride=1, cmap=rainbow, linewidth=0, antialiased=False)
 
-    plt.show()
+    plt.savefig(saveloc + '/' + savename, bbox_inches='tight')
+    #plt.show()
 
 
 

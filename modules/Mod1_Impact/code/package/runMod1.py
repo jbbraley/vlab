@@ -1,4 +1,6 @@
+savedir = r'C:\Users\John\Projects_Git\vlab\modules\Mod1_Impact\images'
 # Import necessary dependencies
+
 import FRF2Shape
 from numpy import *
 
@@ -24,7 +26,7 @@ bcoords = hstack((boundx[...,None],boundy[...,None],zeros(boundx.shape[0])[...,N
 # These will come from the user's interaction with the UI
 # input (impact) dof locations
 ins = arange(11,16)
-# output (sensors) dof locations
+# output (sensors) dof l ocations
 outs = arange(6,21)
 
 
@@ -39,4 +41,5 @@ CMIF, shapes, FRFsub = FRF2Shape.getCMIF(FRF,w,pole=poles,inDOF=ins,outDOF=outs)
 # Plot CMIF (future capability)
 # Plot curve fit of ShapeArray (with DOF coords)
 for eachshape in range(0,poles.shape[0]): # loop though all modes and plot shapes
-    FRF2Shape.modeInterp(DOF_coord[outs,:],shapes[:,eachshape],bcoords,75)
+    imagename = str(eachshape) + '.png'
+    FRF2Shape.modeInterp(DOF_coord[outs,:],shapes[:,eachshape],bcoords,75, savedir, imagename)
