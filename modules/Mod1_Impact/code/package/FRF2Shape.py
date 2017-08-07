@@ -133,8 +133,13 @@ def modeInterp(coords,z,bounds,scale, saveloc, savename):
     surf = ax.plot_surface(xInter, yInter, zInter*scale, rstride=1,
                 cstride=1, cmap=rainbow, linewidth=0, antialiased=False)
 
-    plt.savefig(saveloc + '/' + savename, bbox_inches='tight')
+    plt.tight_layout()
+    fig.subplots_adjust(bottom=0.1)
+
+    plt.savefig(saveloc + '/' + savename) # bbox_inches='tight')
     #plt.show()
+
+    plt.close(fig)
 
 
 
