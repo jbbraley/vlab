@@ -32,7 +32,7 @@ outs = arange(0,15)
 
 ## Compute Shapes from FRF subset
 # use predetermined poles (to be hard coded in future version)
-poles = array([5.54, 7.84, 11.67, 15.34, 19.47])
+poles = array([5.54, 7.84, 15.34, 19.47, 30.79])
 # Run getCMIF
 CMIF, shapes, FRFsub = FRF2Shape.getCMIF(FRF,w,pole=poles,inDOF=ins,outDOF=outs)
 

@@ -130,7 +130,7 @@ def modeInterp(coords,z,bounds,scale, saveloc, savename):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     rainbow = cm = plt.get_cmap('gist_rainbow')
-    surf = ax.plot_surface(xInter, yInter, zInter.transpose()*scale, rstride=1,
+    surf = ax.plot_surface(yInter, xInter, zInter.transpose()*scale, rstride=1,
                 cstride=1, cmap=rainbow, linewidth=0, antialiased=False)
 
     plt.tight_layout()
