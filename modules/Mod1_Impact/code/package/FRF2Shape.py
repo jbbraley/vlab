@@ -48,20 +48,20 @@ def getCMIF(FRF,w,pole=None,outDOF=None,inDOF=None):
 
     # Resample FRF to form subset
     if outDOF is None:
-        no = FRF.shape[0]
-        outs = arange(0,no-1)
+        no = 15
+        outs = arange(0,15)
     else:
-        outs = outDOF-1
+        outs = outDOF
         no = outDOF.shape[0]
 
     if inDOF is None:
-        ni = FRF.shape[1]
-        ins = arange(0,ni-1)
+        ni = 15
+        ins = arange(0,ni)
     else:
-        ins = inDOF-1
+        ins = inDOF
         ni = inDOF.shape[0]
 
-    FRFsub = FRF[outs,:,:][:,ins,:]
+    FRFsub = FRF[outs+5,:,:][:,ins+5,:]
 
     if FRFsub.shape[1]>=FRFsub.shape[0]:
         inswitchout = 1
@@ -126,18 +126,18 @@ def modeInterp(coords,z,bounds,scale, saveloc, savename):
     tck = interpolate.bisplrep(xTot,yTot,zTot)
     zInter = interpolate.bisplev(xInter[0,:],yInter[:,0],tck)
 
-    # plot mesh surface
+        # plot mesh surface
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     rainbow = cm = plt.get_cmap('gist_rainbow')
-    surf = ax.plot_surface(xInter, yInter, zInter*scale, rstride=1,
+    surf = ax.plot_surface(xInter, yInter, zInter.transpose()*scale, rstride=1,
                 cstride=1, cmap=rainbow, linewidth=0, antialiased=False)
 
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.1)
 
     plt.savefig(saveloc + '/' + savename) # bbox_inches='tight')
-    #plt.show()
+#plt.show()
 
     plt.close(fig)
 

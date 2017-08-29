@@ -15,7 +15,7 @@ DOF_coord = FRF2Shape.importCSV(coord_fname)
 # The boundary coords will be hard coded in future version
 # boundary coordinates
 boundx = array([0,576])
-boundy = array([0,72,144,216,288])
+boundy = array([0,36,72,108,144,180,216,252,288])
 boundx, boundy = meshgrid(boundx,boundy)
 boundx = boundx.flatten()
 boundy = boundy.flatten()
@@ -25,9 +25,9 @@ bcoords = hstack((boundx[...,None],boundy[...,None],zeros(boundx.shape[0])[...,N
 ## Compile input parameters
 # These will come from the user's interaction with the UI
 # input (impact) dof locations
-ins = arange(11,16)
+ins = arange(0,15)
 # output (sensors) dof l ocations
-outs = arange(6,21)
+outs = arange(0,15)
 
 
 ## Compute Shapes from FRF subset
