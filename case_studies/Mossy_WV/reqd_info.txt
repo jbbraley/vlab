@@ -1,0 +1,1 @@
+Load rating details (i.e. demands)
