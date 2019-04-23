@@ -1,0 +1,4 @@
+Images should be captioned
+Values in tables should have appropriate sig figs
+Table captions should include units if not listed in table
+images should link to full-size images
